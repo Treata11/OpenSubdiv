@@ -484,6 +484,26 @@ macro(osd_detect_gl_version header)
 
 endmacro()
 
+if(IOS)
+    # Find OpenGLES
+    FIND_PATH(OPENGLES_INCLUDE_DIR
+        OpenGLES/ES2/gl.h
+    )
+
+    FIND_LIBRARY(OPENGLES_LIBRARY OpenGLES)
+
+    if(OPENGLES_INCLUDE_DIR AND OPENGLES_LIBRARY)
+        set(OPENGL_LOADER_INCLUDE_DIRS
+            ${OPENGLES_INCLUDE_DIR}
+            ${PROJECT_SOURCE_DIR}/glLoader)
+        set(OPENGL_LOADER_LIBRARIES
+            ${OPENGLES_LIBRARY}
+            ${CMAKE_DL_LIBS})
+    else()
+        message(FATAL_ERROR "OpenGLES not found!")
+    endif()
+endif()
+
 if(GLEW_FOUND AND GLEW_INCLUDE_DIR)
 
     osd_detect_gl_version(${GLEW_INCLUDE_DIR}/GL/glew.h)
